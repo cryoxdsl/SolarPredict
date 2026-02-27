@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -45,17 +45,17 @@ fun SettingsScreen(vm: SettingsViewModel, padding: PaddingValues) {
         UiState.Loading -> CircularProgressIndicator(modifier = Modifier.padding(24.dp))
         is UiState.Error -> Text(s.message, modifier = Modifier.padding(24.dp))
         is UiState.Success -> {
-            var lat by remember { mutableStateOf(s.data.installation.lat.toString()) }
-            var lon by remember { mutableStateOf(s.data.installation.lon.toString()) }
-            var kwp by remember { mutableStateOf(s.data.installation.kwp.toString()) }
-            var azimuth by remember { mutableStateOf(s.data.installation.azimuthDeg.toString()) }
-            var tilt by remember { mutableStateOf(s.data.installation.tiltDeg.toString()) }
-            var losses by remember { mutableStateOf(s.data.installation.lossesPercent.toString()) }
-            var pacMax by remember { mutableStateOf(s.data.installation.pacMaxW?.toString().orEmpty()) }
-            var shading by remember { mutableStateOf(s.data.installation.shadingLevel) }
-            var provider by remember { mutableStateOf(s.data.config.provider) }
-            var monthlyCalib by remember { mutableStateOf(s.data.config.monthlyCalibrationEnabled) }
-            var notifications by remember { mutableStateOf(s.data.config.notificationsEnabled) }
+            var lat by rememberSaveable(s.data.installation.lat) { mutableStateOf(s.data.installation.lat.toString()) }
+            var lon by rememberSaveable(s.data.installation.lon) { mutableStateOf(s.data.installation.lon.toString()) }
+            var kwp by rememberSaveable(s.data.installation.kwp) { mutableStateOf(s.data.installation.kwp.toString()) }
+            var azimuth by rememberSaveable(s.data.installation.azimuthDeg) { mutableStateOf(s.data.installation.azimuthDeg.toString()) }
+            var tilt by rememberSaveable(s.data.installation.tiltDeg) { mutableStateOf(s.data.installation.tiltDeg.toString()) }
+            var losses by rememberSaveable(s.data.installation.lossesPercent) { mutableStateOf(s.data.installation.lossesPercent.toString()) }
+            var pacMax by rememberSaveable(s.data.installation.pacMaxW) { mutableStateOf(s.data.installation.pacMaxW?.toString().orEmpty()) }
+            var shading by rememberSaveable(s.data.installation.shadingLevel.name) { mutableStateOf(s.data.installation.shadingLevel) }
+            var provider by rememberSaveable(s.data.config.provider) { mutableStateOf(s.data.config.provider) }
+            var monthlyCalib by rememberSaveable(s.data.config.monthlyCalibrationEnabled) { mutableStateOf(s.data.config.monthlyCalibrationEnabled) }
+            var notifications by rememberSaveable(s.data.config.notificationsEnabled) { mutableStateOf(s.data.config.notificationsEnabled) }
 
             Column(
                 modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
@@ -106,6 +106,24 @@ fun SettingsScreen(vm: SettingsViewModel, padding: PaddingValues) {
                     testProvider(context)
                     vm.load()
                 }) { Text("Tester Open-Meteo") }
+                Button(
+                    onClick = {
+                        vm.saveAll(
+                            lat = lat,
+                            lon = lon,
+                            kwp = kwp,
+                            azimuth = azimuth,
+                            tilt = tilt,
+                            losses = losses,
+                            shading = shading,
+                            pacMax = pacMax,
+                            provider = provider,
+                            monthlyCalibrationEnabled = monthlyCalib,
+                            notificationsEnabled = notifications
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text("Sauvegarder tout") }
                 s.data.message?.let { Text(it) }
             }
         }

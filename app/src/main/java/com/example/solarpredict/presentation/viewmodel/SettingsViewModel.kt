@@ -84,6 +84,48 @@ class SettingsViewModel(
         }
     }
 
+    fun saveAll(
+        lat: String,
+        lon: String,
+        kwp: String,
+        azimuth: String,
+        tilt: String,
+        losses: String,
+        shading: ShadingLevel,
+        pacMax: String,
+        provider: String,
+        monthlyCalibrationEnabled: Boolean,
+        notificationsEnabled: Boolean
+    ) {
+        viewModelScope.launch {
+            val current = (_state.value as? UiState.Success)?.data ?: return@launch
+            val installation = current.installation.copy(
+                lat = lat.toDoubleOrNull() ?: current.installation.lat,
+                lon = lon.toDoubleOrNull() ?: current.installation.lon,
+                kwp = kwp.toDoubleOrNull() ?: current.installation.kwp,
+                azimuthDeg = azimuth.toDoubleOrNull() ?: current.installation.azimuthDeg,
+                tiltDeg = tilt.toDoubleOrNull() ?: current.installation.tiltDeg,
+                lossesPercent = losses.toDoubleOrNull() ?: current.installation.lossesPercent,
+                shadingLevel = shading,
+                pacMaxW = pacMax.toDoubleOrNull()
+            )
+            val config = current.config.copy(
+                provider = provider.ifBlank { current.config.provider },
+                monthlyCalibrationEnabled = monthlyCalibrationEnabled,
+                notificationsEnabled = notificationsEnabled
+            )
+            container.configRepository.saveInstallation(installation)
+            container.configRepository.saveAppConfig(config)
+            _state.value = UiState.Success(
+                current.copy(
+                    installation = installation,
+                    config = config,
+                    message = "Paramètres sauvegardés"
+                )
+            )
+        }
+    }
+
     fun importCsv(csvRaw: String) {
         viewModelScope.launch {
             val current = (_state.value as? UiState.Success)?.data ?: return@launch
