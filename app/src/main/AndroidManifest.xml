@@ -9,7 +9,7 @@
         android:label="SolarPredict"
         android:roundIcon="@android:drawable/sym_def_app_icon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        android:theme="@style/Theme.SolarPredict">
 
         <activity
             android:name=".MainActivity"

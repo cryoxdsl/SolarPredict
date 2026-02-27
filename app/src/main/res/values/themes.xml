@@ -1,0 +1,3 @@
+<resources>
+    <style name="Theme.SolarPredict" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
