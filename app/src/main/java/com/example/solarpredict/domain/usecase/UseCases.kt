@@ -87,7 +87,8 @@ class ComputePvForecastUseCase {
     ): ForecastDay {
         val day = date.dayOfYear
         val latFactor = cos(installation.lat * PI / 180.0).coerceIn(0.2, 1.0)
-        val seasonal = 0.55 + 0.45 * cos((day - 172) * 2.0 * PI / 365.0) * -1.0
+        // Max near summer solstice (day ~172), min in winter.
+        val seasonal = 0.55 + 0.45 * cos((day - 172) * 2.0 * PI / 365.0)
         val shadingFactor = when (installation.shadingLevel) {
             ShadingLevel.NONE -> 1.0
             ShadingLevel.LIGHT -> 0.9

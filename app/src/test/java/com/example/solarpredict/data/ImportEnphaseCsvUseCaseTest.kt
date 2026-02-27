@@ -16,8 +16,8 @@ class ImportEnphaseCsvUseCaseTest {
         val repo = FakeActualRepository(parser)
         val useCase = ImportEnphaseCsvUseCase(repo)
 
-        val hourlyCsv = "Date,Hour,Energy\\n2026-01-10,10:00,1.2\\n2026-01-10,11:00,1.0"
-        val dailyCsv = "Date;Energy(kWh)\\n10/01/2026;3,5"
+        val hourlyCsv = "Date,Hour,Energy\n2026-01-10,10:00,1.2\n2026-01-10,11:00,1.0"
+        val dailyCsv = "Date;Energy(kWh)\n10/01/2026;3,5"
 
         val hourly = useCase(hourlyCsv)
         val daily = useCase(dailyCsv)
